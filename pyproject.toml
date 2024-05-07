@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+[project]
+name = "pythor"
+version = "1.0.0"
+description = "Flash tool for Samsung Devices"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "LICENSE.txt"}
+keywords = ["pyusb"]
+authors = [
+    {name = "justaCasualCoder"}
+]
+dependencies = [
+    "pyusb",
+    "treelib"
+]
+[project.optional-dependencies]
+dev = [
+    "mkdocstrings[python]",
+    "mkdocs-material"
+]
+[project.urls]
+"Homepage" = "https://github.com/justaCasualCoder/pythor"

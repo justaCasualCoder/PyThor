@@ -1,0 +1,19 @@
+site_name: "PyThor Docs"
+
+theme:
+  name: "material"
+nav:
+  - index.md
+  - API Reference: reference.md
+plugins:
+- search
+- mkdocstrings:
+    handlers:
+      python:
+        paths: [pythor]
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+watch:
+  - pythor
