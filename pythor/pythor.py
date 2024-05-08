@@ -145,7 +145,7 @@ class PyThor:
                 }
                 self.partitions[entry["Partition"]] = entry
 
-    def flash(self, stream: BytesIO, entry: str, progress_callback):
+    def flash(self, stream: BytesIO, entry: str, progress_callback, update_bootloader=False, efs_clear=False):
         """
         Flash a file to device.
 
@@ -154,10 +154,9 @@ class PyThor:
         - `stream`: An open file stream
         - `entry`: Partition name
         - `progress_callback`: Callback for progress.
+        - `update_bootloader` (optional)
+        - `efs_clear` (optional)
         """
-        bootloader_update = False
-        efs_clear = False
-
         def get_size(s):
             s.seek(0, 2)
             size = s.tell()
@@ -228,7 +227,7 @@ class PyThor:
                 self.pack(entry["PartitionID"], 24, buf)
                 self.pack(1 if last else 0, 28, buf)
                 self.pack(1 if efs_clear else 0, 32, buf)
-                self.pack(1 if bootloader_update else 0, 36, buf)
+                self.pack(1 if update_bootloader else 0, 36, buf)
                 self.write(buf)
             self.read(timeout=120000)
 
@@ -328,7 +327,7 @@ class PyThor:
         !!! example
             ```python
             # This should be structured better...
-            from pythor.pythor import PyThor
+            from pythor import PyThor
             def callback(percent):
                 print(f"{percent}% done")
             FlashTool = PyThor()
