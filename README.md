@@ -6,7 +6,7 @@ It uses [pyusb](https://github.com/pyusb/pyusb/) for accessing Samsung devices. 
 # Compatibility
 PyThor was tested and worked on:
 - Linux
-- Windows
+- Windows (using [libusb-1.0.27](https://github.com/libusb/libusb/releases/tag/v1.0.27))
 # TODO
 - Add checks to returned data
 - Check if a session has begin before doing anything.
