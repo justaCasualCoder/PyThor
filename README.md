@@ -6,3 +6,4 @@ It uses [pyusb](https://github.com/pyusb/pyusb/) for accessing Samsung devices. 
 
 # TODO
 - Add checks to returned data
+- Check if a session has begin before doing anything.
