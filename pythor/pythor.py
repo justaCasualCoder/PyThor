@@ -1,14 +1,17 @@
+import os.path
+
 import usb
 import struct
 from treelib import Tree
 import math
 from io import BytesIO
 import logging
-
+logging.basicConfig(level=logging.WARNING)
 
 class PyThor:
     def __init__(self):
         self.dev = None
+        self.session_started = False
         self.flashpacketsize = int
         self.sequencesize = int
         self.partitions = {}
@@ -36,10 +39,10 @@ class PyThor:
 
         - `data`: Data to send to device
         """
-        if self.dev:
+        if self.dev and self.session_started:
             self.dev.write(0x1, data)
         else:
-            raise ValueError("No device connected")
+            raise ValueError("You need to start a session first")
 
     def read(self, timeout: int = None):
         """
@@ -47,8 +50,11 @@ class PyThor:
 
         - `timeout` (optional): read timeout in ms.
         """
-        ret = self.dev.read(0x81, 0x1000, timeout)
-        return ret
+        if self.dev and self.session_started:
+            ret = self.dev.read(0x81, 0x1000, timeout)
+            return ret
+        else:
+            raise ValueError("You need to start a session first")
 
     def print_pit(self):
         """Print PIT of device"""
@@ -248,6 +254,7 @@ class PyThor:
         self.read()
 
     def begin_session(self):
+        self.session_started = True
         """
         Begin a ODIN session
         """
@@ -335,5 +342,9 @@ class PyThor:
             FlashTool.flash_file("/path/to/file", "RECOVERY", callback)
             ```
         """
-        with open(file, "rb") as stream:
-            self.flash(stream, partition, callback)
+        # Check if file exists
+        if os.path.exists(file):
+            with open(file, "rb") as stream:
+                self.flash(stream, partition, callback)
+        else:
+            logging.error("That file doesn't exist")

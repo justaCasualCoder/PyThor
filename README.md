@@ -9,4 +9,4 @@ PyThor was tested and worked on:
 - Windows (using [libusb-1.0.27](https://github.com/libusb/libusb/releases/tag/v1.0.27))
 # TODO
 - Add checks to returned data
-- Check if a session has begin before doing anything.
+- Allow choosing between multiple devices
