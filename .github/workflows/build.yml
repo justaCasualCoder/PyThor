@@ -1,3 +1,5 @@
+permissions:
+    contents: write
 on:
     push:
 jobs:
@@ -11,7 +13,7 @@ jobs:
             - name: Update nightly release
               uses: pyTooling/Actions/releaser@r0
               with:
-                tag: nightly
+                tag: latest
                 rm: true
                 token: ${{ secrets.GITHUB_TOKEN }}
                 files: dist/*
