@@ -1,0 +1,24 @@
+on:
+    push:
+jobs:
+    build-windows:
+        runs-on: 'windows-latest'
+        steps:
+        - uses: actions/checkout@v2
+        - uses: actions/setup-python@v2  
+        - run: pip install -r requirements.txt pyinstaller
+        - run: iwr -outf libusb.7z https://github.com/libusb/libusb/releases/download/v1.0.27/libusb-1.0.27.7z; tar -xf libusb.7z
+        - run: pyinstaller --onefile --add-binary MinGW64\dll\libusb-1.0.dll:. pythor/pythor_cli.py
+        - uses: actions/upload-artifact@v2
+          with:
+            path: dist/*
+    build-linux:
+        runs-on: 'ubuntu-latest'
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-python@v2  
+            - run: pip install -r requirements.txt pyinstaller
+            - run: pyinstaller --onefile pythor/pythor_cli.py
+            - uses: actions/upload-artifact@v2
+              with:
+                path: dist/*

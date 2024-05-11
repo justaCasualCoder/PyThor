@@ -1,6 +1,7 @@
 from pythor import PyThor
 import readline
 import platform
+import sys
 from usb.core import USBTimeoutError, USBError
 from alive_progress import alive_bar
 if platform.system() == 'Linux':
@@ -10,7 +11,7 @@ class Shell:
         self.tool = PyThor()
         self.commands = {
             "help": [self.print_help, "Print this help"],
-            "exit": [quit, "Exit the program"],
+            "exit": [sys.exit(), "Exit the program"],
             "connect": [self.tool.connect, "Connect to device"],
             "begin": [self.tool.begin_session, ("resume",), "Begin session"],
             "flashFile": [
@@ -67,7 +68,7 @@ class Shell:
                 cmd = input(">> ")
             except KeyboardInterrupt:
                 print("\033[2K\033[1GUse \033[1m\x1B[3m\033[93mexit\x1B[0m next time.")
-                quit()
+                sys.exit()
             cmd, *args = cmd.strip().split(" ")
             if cmd and cmd not in self.commands:
                 print("\033[93mCommand not found\033[0m")
