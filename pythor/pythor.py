@@ -268,8 +268,8 @@ class PyThor:
     def begin_session(self, resume=False):
         """
         Begin a ODIN session
-        Arguments:
-            - `resume`: Are we resuming from a previous session?
+        
+        - `resume`: Are we resuming from a previous session?
         """
         self.session_started = True
         if not resume:
