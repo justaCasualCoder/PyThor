@@ -23,3 +23,5 @@ dev = [
 ]
 [project.urls]
 "Homepage" = "https://github.com/justaCasualCoder/pythor"
+[project.scripts]
+pythor_cli = "pythor:cli"

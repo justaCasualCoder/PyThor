@@ -1,12 +1,14 @@
 import os.path
-
 import usb
 import struct
 from treelib import Tree
 import math
 from io import BytesIO
+from usb.core import USBTimeoutError
 import logging
+
 logging.basicConfig(level=logging.WARNING)
+
 
 class PyThor:
     def __init__(self):
@@ -60,6 +62,8 @@ class PyThor:
         """Print PIT of device"""
         tree = Tree()
         root = tree.create_node("Partitions")
+        if not self.partitions:
+            self.get_pit()
         for partition, attributes in self.partitions.items():
             node = tree.create_node(partition, parent=root)
             for key, value in attributes.items():
@@ -151,7 +155,14 @@ class PyThor:
                 }
                 self.partitions[entry["Partition"]] = entry
 
-    def flash(self, stream: BytesIO, entry: str, progress_callback, update_bootloader=False, efs_clear=False):
+    def flash(
+        self,
+        stream: BytesIO,
+        entry: str,
+        progress_callback,
+        update_bootloader=False,
+        efs_clear=False,
+    ):
         """
         Flash a file to device.
 
@@ -163,6 +174,7 @@ class PyThor:
         - `update_bootloader` (optional)
         - `efs_clear` (optional)
         """
+
         def get_size(s):
             s.seek(0, 2)
             size = s.tell()
@@ -253,15 +265,22 @@ class PyThor:
         self.write(buf)
         self.read()
 
-    def begin_session(self):
-        self.session_started = True
+    def begin_session(self, resume=False):
         """
         Begin a ODIN session
+        Arguments:
+            - `resume`: Are we resuming from a previous session?
         """
-        self.write("ODIN")
-        ret = self.read()
-        if ret.tobytes().decode("utf-8") != "LOKE":
-            raise ValueError(f"Expected LOKE; Got {ret.tobytes().decode('utf-8')}")
+        self.session_started = True
+        if not resume:
+            try:
+                self.write("ODIN")
+                ret = self.read()
+            except USBTimeoutError:
+                self.session_started = False
+                raise ValueError("Error starting session")
+            if ret.tobytes().decode("utf-8") != "LOKE":
+                raise ValueError(f"Expected LOKE; Got {ret.tobytes().decode('utf-8')}")
         buf = bytearray(1024)
         self.pack(0x64, 0, buf)
         self.pack(0x00, 4, buf)
@@ -298,6 +317,7 @@ class PyThor:
         # Reboot
         self.read()
         self.dev = None
+        self.partitions = {}
 
     def shutdown(self):
         """
@@ -308,6 +328,8 @@ class PyThor:
         self.pack(0x03, 4, buf)
         self.write(buf)
         self.read()
+        self.dev = None
+        self.partitions = {}
 
     def end_session(self):
         """
@@ -348,3 +370,13 @@ class PyThor:
                 self.flash(stream, partition, callback)
         else:
             logging.error("That file doesn't exist")
+
+    def factory_reset(self):
+        """
+        Factory reset the device (erase userdata)
+        """
+        buf = bytearray(1024)
+        self.pack(0x64, 0, buf)
+        self.pack(0x07, 4, buf)
+        self.write(buf)
+        self.read(timeout=600000)
