@@ -1,5 +1,4 @@
 from pythor import PyThor
-import readline
 import platform
 import sys
 from usb.core import USBTimeoutError, USBError
