@@ -1,9 +1,10 @@
 from pythor import PyThor
 import readline
+import platform
 from usb.core import USBTimeoutError, USBError
 from alive_progress import alive_bar
-
-
+if platform.system() == 'Linux':
+    import readline
 class Shell:
     def __init__(self):
         self.tool = PyThor()
@@ -11,7 +12,7 @@ class Shell:
             "help": [self.print_help, "Print this help"],
             "exit": [quit, "Exit the program"],
             "connect": [self.tool.connect, "Connect to device"],
-            "begin": [self.tool.begin_session, ("resume"), "Begin session"],
+            "begin": [self.tool.begin_session, ("resume",), "Begin session"],
             "flashFile": [
                 self.flash_file,
                 ("file", "partition"),
