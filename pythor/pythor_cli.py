@@ -10,7 +10,7 @@ class Shell:
         self.tool = PyThor()
         self.commands = {
             "help": [self.print_help, "Print this help"],
-            "exit": [sys.exit(), "Exit the program"],
+            "exit": [sys.exit, "Exit the program"],
             "connect": [self.tool.connect, "Connect to device"],
             "begin": [self.tool.begin_session, ("resume",), "Begin session"],
             "flashFile": [
