@@ -361,6 +361,7 @@ class PyThor:
                 print(f"{percent}% done")
             FlashTool = PyThor()
             FlashTool.connect()
+            FlashTool.begin_session()
             FlashTool.flash_file("/path/to/file", "RECOVERY", callback)
             ```
         """
