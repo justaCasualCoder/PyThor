@@ -14,6 +14,7 @@ class PyThor:
     def __init__(self):
         self.dev = None
         self.session_started = False
+        self.t_flash_enabled = False
         self.flashpacketsize = int
         self.sequencesize = int
         self.partitions = {}
@@ -303,7 +304,16 @@ class PyThor:
         self.write(buf)
         self.read()
         print("Successfully began a session!")
-
+    def enable_tflash(self):
+        """
+        Enable T-Flash
+        """
+        buf = bytearray(1024)
+        self.pack(0x64, 0, buf)
+        self.pack(0x08, 4, buf)
+        self.write(buf)
+        self.read(timeout=600000)
+        self.t_flash_enabled = True
     def reboot(self):
         """
         Reboot the device
